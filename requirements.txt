@@ -1,0 +1,3 @@
+pyinstaller>=4.0
+napari
+pyqt5<5.15
