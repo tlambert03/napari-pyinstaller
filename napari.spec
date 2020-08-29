@@ -7,16 +7,52 @@ import napari
 sys.modules["FixTk"] = None
 
 
-def get_icon():
-    logo_file = "logo.ico" if sys.platform.startswith("win") else "logo.icns"
-    return logo_file
-
-
 NAME = "napari-app"
 WINDOWED = True
 DEBUG = False
 UPX = False
 BLOCK_CIPHER = None
+
+
+def get_icon():
+    logo_file = "logo.ico" if sys.platform.startswith("win") else "logo.icns"
+    return logo_file
+
+
+def get_version():
+    if sys.platform != "win32":
+        return None
+
+    from PyInstaller.utils.win32 import versioninfo as vi
+
+    ver_str = napari.__version__
+    version = ver_str.replace("+", ".").split(".")
+    version = [int(x) for x in version if x.isnumeric()]
+    version += [0] * (4 - len(version))
+    version = tuple(version)[:4]
+    return vi.VSVersionInfo(
+        ffi=vi.FixedFileInfo(filevers=version, prodvers=version),
+        kids=[
+            vi.StringFileInfo(
+                [
+                    vi.StringTable(
+                        "000004b0",
+                        [
+                            vi.StringStruct("CompanyName", NAME),
+                            vi.StringStruct("FileDescription", NAME),
+                            vi.StringStruct("FileVersion", ver_str),
+                            vi.StringStruct("LegalCopyright", ""),
+                            vi.StringStruct("OriginalFileName", NAME + ".exe"),
+                            vi.StringStruct("ProductName", NAME),
+                            vi.StringStruct("ProductVersion", ver_str),
+                        ],
+                    )
+                ]
+            ),
+            vi.VarFileInfo([vi.VarStruct("Translation", [0, 1200])]),
+        ],
+    )
+
 
 a = Analysis(
     ["main.py"],
@@ -45,7 +81,7 @@ exe = EXE(
     upx=UPX,
     console=(not WINDOWED),
     icon=get_icon(),
-    version=napari.__version__,
+    version=get_version(),
 )
 
 coll = COLLECT(
