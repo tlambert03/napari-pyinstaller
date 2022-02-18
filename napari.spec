@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 import sys
 from PyInstaller.building.build_main import Analysis, PYZ, EXE, COLLECT, BUNDLE
-
+from PyInstaller.utils.hooks import copy_metadata
 import napari
 
 sys.modules["FixTk"] = None
@@ -56,6 +56,32 @@ def get_version():
 
 a = Analysis(
     ["main.py"],
+    hiddenimports=['imageio.plugins.tifffile',
+                   'imageio.plugins.pillow_legacy',
+                   'imageio.plugins.ffmpeg',
+                   'imageio.plugins.bsdf',
+                   'imageio.plugins.dicom',
+                   'imageio.plugins.feisem',
+                   'imageio.plugins.fits',
+                   'imageio.plugins.gdal',
+                   'imageio.plugins.dicom',
+                   'imageio.plugins.example',
+                   'imageio.plugins.freeimage',
+                   'imageio.plugins.freeimagemulti',
+                   'imageio.plugins.grab',
+                   'imageio.plugins.lytro',
+                   'imageio.plugins.npz',
+                   'imageio.plugins.pillow',
+                   'imageio.plugins.pillow_info',
+                   'imageio.plugins.pillow_legacy',
+                   'imageio.plugins.pillowmulti',
+                   'imageio.plugins.simpleitk',
+                   'imageio.plugins.spe',
+                   'imageio.plugins.swf',
+                   'napari._event_loop',
+                   'napari.view_layers'
+                   ],
+    datas = copy_metadata("napari"),
     hookspath=["hooks"],
     excludes=[
         "FixTk",
